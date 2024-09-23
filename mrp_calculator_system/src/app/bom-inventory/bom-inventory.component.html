@@ -1,0 +1,114 @@
+<div class="container mt-5">
+  <h1 class="f text-center">BOM and Inventory Input</h1>
+
+  <form (ngSubmit)="onSubmit()" class="mt-4" #form="ngForm">
+    <h3 class="f1">Bill of Materials (BOM)</h3>
+    <div *ngFor="let bomItem of bomItems; let i = index">
+      <div>
+        <label>Component Name:</label>
+        <input
+          type="text"
+          [(ngModel)]="bomItem.name"
+          name="bomName{{ i }}"
+          required
+        />
+        <div
+          *ngIf="
+            form.controls['bomName' + i]?.invalid &&
+            form.controls['bomName' + i]?.touched
+          "
+        >
+          <small class="text-danger">Component Name is required.</small>
+        </div>
+      </div>
+      <div>
+        <label>Quantity Required:</label>
+        <input
+          type="number"
+          [(ngModel)]="bomItem.quantity"
+          name="bomQuantity{{ i }}"
+          required
+          min="0"
+        />
+        <div
+          *ngIf="
+            form.controls['bomQuantity' + i]?.invalid &&
+            (form.controls['bomQuantity' + i]?.touched || form.submitted)
+          "
+        >
+          <small class="text-danger">Quantity must be a positive number.</small>
+        </div>
+      </div>
+      <button type="button" (click)="removeBOMItem(i)">Remove BOM Item</button>
+    </div>
+    <button
+      type="button"
+      (click)="addBOMItem()"
+      [disabled]="!bomItems[bomItems.length - 1]?.name"
+    >
+      Add BOM Item
+    </button>
+
+    <h3 class="f1 mt-2">Current Inventory Levels</h3>
+    <div *ngFor="let inventoryItem of inventoryItems; let j = index">
+      <div>
+        <label>Component Name:</label>
+        <input
+          type="text"
+          [(ngModel)]="inventoryItem.name"
+          name="inventoryName{{ j }}"
+          required
+        />
+        <div
+          *ngIf="
+            form.controls['inventoryName' + j]?.invalid &&
+            form.controls['inventoryName' + j]?.touched
+          "
+        >
+          <small class="text-danger">Component Name is required.</small>
+        </div>
+      </div>
+      <div>
+        <label>Current Stock:</label>
+        <input
+          type="number"
+          [(ngModel)]="inventoryItem.stock"
+          name="inventoryStock{{ j }}"
+          required
+          min="0"
+        />
+        <div
+          *ngIf="
+            form.controls['inventoryStock' + j]?.invalid &&
+            form.controls['inventoryStock' + j]?.touched
+          "
+        >
+          <small class="text-danger">Stock must be a positive number.</small>
+        </div>
+      </div>
+
+      <button type="button" (click)="removeInventoryItem(j)">
+        Remove Inventory Item
+      </button>
+    </div>
+    <button
+      type="button"
+      (click)="addInventoryItem()"
+      [disabled]="!inventoryItems[inventoryItems.length - 1]?.name"
+    >
+      Add Inventory Item
+    </button>
+
+    <button type="submit" class="btn btn-primary btn-block mt-4">
+      Calculate Requirements
+    </button>
+  </form>
+
+  <div *ngIf="output" class="mt-4" id="outputSection">
+    <h4>Output</h4>
+    <h5 class="f1">Net Requirements:</h5>
+    <pre>{{ output.netRequirements | json }}</pre>
+    <h5 class="f1">Planned Orders:</h5>
+    <pre>{{ output.plannedOrders | json }}</pre>
+  </div>
+</div>
